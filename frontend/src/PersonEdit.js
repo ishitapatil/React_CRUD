@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, Prompt} from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Alert } from 'react-alert';
 import AppNavBar from './AppNavBar';
 
 class PersonEdit extends Component {
 
     emptyItem = {
         firstName: '',
-        lastName: ''
+        lastName: '',
+        phones: []
     };
 
     constructor(props) {
@@ -40,20 +42,50 @@ class PersonEdit extends Component {
         const {item} = this.state;
     
         console.log(item);
-        await fetch('/v1/people' + (item.id ? '/' + item.id+"/" : ''), {
-            method: (item.id) ? 'PUT' : 'POST',
-            headers: {
-                'allow':'PUT',
-                'Access-Control-Allow-Methods': 'PUT',
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item),
-        }).then(function (resp) {
-            console.log(resp);
+        // await fetch('/v1/people' + (item.id ? '/' + item.id+"/" : ''), {
+        //     method: (item.id) ? 'PUT' : 'POST',
+        //     headers: {
+        //         'allow':'PUT',
+        //         'Access-Control-Allow-Methods': 'PUT',
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(item),
+        // });
+        // this.props.history.push('/v1/people');
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+        "id": item.id,
+        "firstName": item.firstName,
+        "lastName": item.lastName,
+        "phones": item.phones
         });
-        this.props.history.push('/v1/people');
-    }
+        
+        var requestOptions = {
+        method: (item.id) ? 'PUT' : 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        };
+
+        fetch("http://localhost:8081/v1/people", requestOptions)
+        .then(response => response.text())
+        .then(result => {const res = JSON.parse(result)
+            const status = res.status;
+            const errors = res.errors;
+            if (status === "Success") {
+                console.log("Updated Successfully!");
+                alert("Updated Successfully :) !");
+            }
+            else {
+                 alert("Update Failed!");
+                }
+})
+        .catch(error => console.log('error', error));
+            }
 
     render() {
         const {item} = this.state;
@@ -73,6 +105,28 @@ class PersonEdit extends Component {
                         <Label for="lastName">Last Name</Label>
                         <Input type="text" name="lastName" id="lastName" value={item.lastName || ''}
                                onChange={this.handleChange} autoComplete="lastName"/>
+                    </FormGroup>
+                    <FormGroup>
+                    <table id="campaignDetaislTable" className="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Phone Number</th>
+                                        <th>Phone Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        this.state.item.phones.map((val, ind) => (
+                                            <tr key={val.number} className='campaignDetails'>
+                                                <td><input type="text" name="phoneNumber" id="phoneNumber" value={val.number} 
+                                                onChange={this.handleChange} autoComplete="phoneNumber"/></td>
+                                                <td>{val.type}</td>
+                                            </tr>
+                                        ))
+                                    }
+                                </tbody>
+                            </table>
+                        
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}
