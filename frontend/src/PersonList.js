@@ -44,7 +44,9 @@ class PersonList extends Component {
             return <tr key={person.id}>
                 <td style={{ whiteSpace: 'nowrap' }}>{person.firstName}</td>
                 <td style={{ whiteSpace: 'nowrap' }}>{person.lastName}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>{JSON.stringify(person.phones)}</td>
+                <td style={{ whiteSpace: 'nowrap' }}><td>{JSON.stringify(person.phones[0])}</td>
+                                                    <td>{JSON.stringify(person.phones[1])}</td>
+                                                    <td>{JSON.stringify(person.phones[2])}</td></td>
                 <td>
                     <ButtonGroup>
                         <Button size="sm" color="primary" tag={Link} to={"/v1/people" + person.id}>Edit</Button>

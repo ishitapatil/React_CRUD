@@ -112,6 +112,8 @@ class PersonEdit extends Component {
                                     <tr>
                                         <th>Phone Number</th>
                                         <th>Phone Type</th>
+                                        <th><Button color="secondary" tag={Link} to="/v1/people">Add Phone</Button></th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -121,6 +123,7 @@ class PersonEdit extends Component {
                                                 <td><input type="text" name="phoneNumber" id="phoneNumber" value={val.number} 
                                                 onChange={this.handleChange} autoComplete="phoneNumber"/></td>
                                                 <td>{val.type}</td>
+                                                <td><Button color="danger" tag={Link} to="/v1/people">Delete</Button></td>
                                             </tr>
                                         ))
                                     }
